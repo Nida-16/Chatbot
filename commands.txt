@@ -1,0 +1,5 @@
+conda activate pytorch
+
+py nltk_utils.py
+
+
