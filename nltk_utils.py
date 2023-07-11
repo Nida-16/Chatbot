@@ -12,7 +12,7 @@ def stem(word):
 
 def create_bag_of_words(sentence_tokens,all_words):
     sentence_tokens = [stem(w) for w in sentence_tokens]
-    bag_of_words = np.zeros(len(all_words),dtype=np.float64)
+    bag_of_words = np.zeros(len(all_words), dtype=np.float32)
     for idx,word in enumerate(all_words):
         if word in sentence_tokens:
             bag_of_words[idx] = 1.0

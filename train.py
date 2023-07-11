@@ -15,9 +15,9 @@ tags = []
 xy = []    # will later hold all our oatterns and tags
 
 for i in intents['intents']:
-    tag = i['intent']
+    tag = i['tag']
     tags.append(tag)
-    for pattern in i['text']:
+    for pattern in i['patterns']:
         tokens = tokenize(pattern)
         all_words.extend(tokens)
         # using append would create an array of arrays as tokens would be a list of words itself
@@ -58,8 +58,8 @@ BATCH_SIZE = 8
 INPUT_SIZE = len(X_train[0])
 HIDDEN_SIZE = 8
 OUTPUT_SIZE = len(tags)
-LEARNING_RATE = 0.001
-EPOCHS = 100
+LEARNING_RATE = 0.0001
+EPOCHS = 1000
 # print(INPUT_SIZE, len(all_words), len(bag))
 # print(OUTPUT_SIZE, tags)
 
@@ -77,9 +77,10 @@ for epoch in range(EPOCHS):
     for (words, labels) in data_loader:
         words = words.to(device)
         labels = labels.to(device)
-        
+        labels = labels.long()
         # Feed Forward Network
         predicted_ouputs = model(words)
+        
         loss = criterion(predicted_ouputs, labels)
         
         # Back Propogation and Optimizers
@@ -87,7 +88,23 @@ for epoch in range(EPOCHS):
         loss.backward()
         optimizer.step()
         
-    if (epoch %10 ==0):
+    if (epoch %100 ==0):
         print(f"Epochs : {epoch}/{EPOCHS}, Loss : {loss.item():.4f}")
         
-    print(f"Final loss : {loss.item():.4f}") 
+print(f"Final loss : {loss.item():.4f}") 
+
+data = {
+    "model_state" : model.state_dict(),
+    "input_size" : INPUT_SIZE,
+    "output_size" : OUTPUT_SIZE,
+    "hidden_size" : HIDDEN_SIZE,
+    "all_words" : all_words,
+    "tags" : tags
+}
+
+FILE_NAME = "data.pth"
+torch.save(data, FILE_NAME)
+
+print("Training completed")
+print(f"File saved to {FILE_NAME}")
+
